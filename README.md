@@ -16,6 +16,7 @@ function before writing it to the actual response writer.
 Any feedback is welcome and appreciated!
 
 The origin code is written by [@pkieltyka](https://github.com/pkieltyka)
+
 Changed for [Gin](https://github.com/gin-gonic/gin) by [@jim3mar](https://github.com/jim3mar)
 
 ## Example
