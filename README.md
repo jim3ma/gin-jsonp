@@ -1,4 +1,4 @@
-# JSONP Go http middleware
+# JSONP http middleware for [Gin](https://github.com/gin-gonic/gin)
 
 JSONP is a common technique used to communicate with a JSON-serving Web Service with a
 Web browser over cross-domains, in place of a XHR request. There is a lot written about
@@ -8,90 +8,76 @@ with the addition of a `callback` (or `jsonp`) query parameter that represents a
 randomly-named listener function that will parse the request when it comes back from
 the server.
 
-This middleware will work with anything that supports standard `http.Handler`. The code
+This middleware will work for [Gin](https://github.com/gin-gonic/gin). The code
 is small, so go read it, but it just buffers the response from the rest of the chain,
 and if its a JSON request with a callback, then it will wrap the response in the callback
 function before writing it to the actual response writer.
 
 Any feedback is welcome and appreciated!
 
-Written by [@pkieltyka](https://github.com/pkieltyka)
+The origin code is written by [@pkieltyka](https://github.com/pkieltyka)
+Changed for [Gin](https://github.com/gin-gonic/gin) by [@jim3mar](https://github.com/jim3mar)
 
 ## Example
 
 ```go
-// JSONP example using Goji framework.. but anything that accepts
-// a http.Handler middleware chain will work
 package main
 
 import (
-  "log"
-  "net/http"
-
-  "github.com/goware/jsonp"
-  "github.com/unrolled/render"
-  "github.com/zenazn/goji/web"
-  "github.com/zenazn/goji/web/middleware"
+	"github.com/gin-gonic/gin"
+	jsonp "github.com/jim3mar/ginjsonp"
 )
 
 func main() {
-  mux := web.New()
-  render := render.New(render.Options{})
-
-  mux.Use(middleware.Logger)
-  mux.Use(jsonp.Handler)
-
-  mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
-    data := &SomeObj{"superman"}
-    render.JSON(w, 200, data)
-  })
-
-  err := http.ListenAndServe(":4444", mux)
-  if err != nil {
-    log.Fatal(err)
-  }
+	r := gin.New()
+	// Global middleware
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(jsonp.Handler())
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+		"message": "pong",
+		})
+	})
+	r.Run(":8088") // listen and server on 0.0.0.0:8080
 }
-
-type SomeObj struct {
-  Name string `json:"name"`
-}
-
 ```
 
 *Output:*
 
 ```
-$ curl -v "http://localhost:4444/"
+$ curl -v "http://localhost:8088/ping"
+* About to connect() to localhost port 8088 (#0)
 *   Trying ::1...
-* Connected to localhost (::1) port 4444 (#0)
-> GET / HTTP/1.1
-> Host: localhost:4444
-> User-Agent: curl/7.43.0
+* Connected to localhost (::1) port 8088 (#0)
+> GET /ping HTTP/1.1
+> User-Agent: curl/7.29.0
+> Host: localhost:8088
 > Accept: */*
->
+> 
 < HTTP/1.1 200 OK
-< Content-Type: application/json; charset=UTF-8
-< Date: Fri, 14 Aug 2015 19:11:44 GMT
+< Content-Type: application/json; charset=utf-8
+< Date: Thu, 07 Apr 2016 02:45:40 GMT
 < Content-Length: 19
-<
-* Connection #0 to host localhost left intact
-{"name":"superman"}
+< 
+{"message":"pong"}
 
-$ curl -v "http://localhost:4444/?callback=X"
+$ curl -v "http://localhost:8088/ping?callback=X"
+* About to connect() to localhost port 8088 (#0)
 *   Trying ::1...
-* Connected to localhost (::1) port 4444 (#0)
-> GET /?callback=X HTTP/1.1
-> Host: localhost:4444
-> User-Agent: curl/7.43.0
+* Connected to localhost (::1) port 8088 (#0)
+> GET /ping?callback=X HTTP/1.1
+> User-Agent: curl/7.29.0
+> Host: localhost:8088
 > Accept: */*
->
+> 
 < HTTP/1.1 200 OK
-< Content-Length: 122
+< Content-Length: 121
 < Content-Type: application/javascript
-< Date: Fri, 14 Aug 2015 19:11:49 GMT
-<
+< Date: Thu, 07 Apr 2016 02:45:58 GMT
+< 
 * Connection #0 to host localhost left intact
-X({"meta":{"content-length":19,"content-type":"application/json; charset=UTF-8","status":200},"data":{"name":"superman"}})
+X({"meta":{"content-length":19,"content-type":"application/json; charset=utf-8","status":200},"data":{"message":"pong"}})#
 ```
 
 ## NOTES
@@ -114,4 +100,4 @@ JsonpCallbackFn_abc123etc({
 
 ## LICENSE
 
-BSD
+BSD 3

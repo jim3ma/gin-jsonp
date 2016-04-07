@@ -1,35 +1,20 @@
-// JSONP example using Goji framework.. but anything that accepts
-// a http.Handler middleware chain will work
 package main
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/goware/jsonp"
-	"github.com/unrolled/render"
-	"github.com/zenazn/goji/web"
-	"github.com/zenazn/goji/web/middleware"
+	"github.com/gin-gonic/gin"
+	jsonp "github.com/jim3mar/ginjsonp"
 )
 
 func main() {
-	mux := web.New()
-	render := render.New(render.Options{})
-
-	mux.Use(middleware.Logger)
-	mux.Use(jsonp.Handler)
-
-	mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		data := &SomeObj{"superman"}
-		render.JSON(w, 200, data)
+	r := gin.New()
+	// Global middleware
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(jsonp.Handler())
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+		"message": "pong",
+		})
 	})
-
-	err := http.ListenAndServe(":4444", mux)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-type SomeObj struct {
-	Name string `json:"name"`
+	r.Run(":8088") // listen and server on 0.0.0.0:8080
 }
