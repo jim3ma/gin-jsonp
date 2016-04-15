@@ -1,4 +1,4 @@
-# JSONP http middleware for [Gin](https://github.com/gin-gonic/gin)
+# JSONP Middleware for [Gin](https://github.com/gin-gonic/gin) Framework
 
 JSONP is a common technique used to communicate with a JSON-serving Web Service with a
 Web browser over cross-domains, in place of a XHR request. There is a lot written about
