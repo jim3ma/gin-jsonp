@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	jsonp "github.com/jim3mar/ginjsonp"
+	jsonp "github.com/jim3ma/ginjsonp"
 )
 
 func main() {

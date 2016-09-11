@@ -17,7 +17,7 @@ Any feedback is welcome and appreciated!
 
 The origin code is written by [@pkieltyka](https://github.com/pkieltyka)
 
-Changed for [Gin](https://github.com/gin-gonic/gin) by [@jim3mar](https://github.com/jim3mar)
+Changed for [Gin](https://github.com/gin-gonic/gin) by [@jim3ma](https://github.com/jim3ma)
 
 ## Example
 
@@ -26,7 +26,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	jsonp "github.com/jim3mar/ginjsonp"
+	jsonp "github.com/jim3ma/ginjsonp"
 )
 
 func main() {
