@@ -26,7 +26,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	jsonp "github.com/jim3ma/ginjsonp"
+	"github.com/jim3ma/gin-jsonp"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 	// Global middleware
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(jsonp.Handler())
+	r.Use(ginjsonp.Handler())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 		"message": "pong",
